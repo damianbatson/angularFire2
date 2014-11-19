@@ -1,0 +1,45 @@
+<div class="container">
+<div class="row">
+      <div class="col-md-12">
+        <div class="row">
+
+        <div class="col-sm-2"> 
+
+  <!-- <div class="loginStatus"> -->
+<p class="status good" ng-show-auth>Hello! You are logged in.</p>
+<p class="status" ng-hide-auth>Not logged in</p>
+<p class="status error" ng-hide-auth>{{auth.error}}</p>
+<!-- </div> -->
+
+</div>
+
+
+<div class="col-sm-10">
+<h2>Login Page</h2>
+
+<form>
+    <label>
+        <span>email</span>
+        <input type="text" ng-model="email" />
+    </label>
+    <label>
+        <span>password</span>
+        <input type="password" ng-model="pass" />
+    </label>
+    <!-- <label ng-cloak ng-show="createMode">
+        <span>confirm pass</span>
+        <input type="password" ng-model="confirm" />
+    </label> -->
+    <button class="btn btn-primary" ng-click="login(email, pass)" ng-hide="createMode">Log In</button>
+    <!-- <button ng-click="createMode = true" ng-hide="createMode">Register</button> -->
+    <!-- <button ng-cloak ng-show="createMode" ng-click="createAccount(email, pass, confirm)">Create Account</button> -->
+    <button class="btn btn-danger" ng-cloak ng-click="createMode = false">Cancel</button>
+
+    <p ng-show="err" class="error">{{err}}</p>
+</form>
+
+</div>
+</div>
+</div>
+</div>
+</div>
