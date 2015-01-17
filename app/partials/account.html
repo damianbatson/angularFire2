@@ -110,16 +110,16 @@
 <form>
   <input placeholder="Message..." ng-model="newMessage">
   <input placeholder="Message..." ng-model="newExer01">
-  <input placeholder="Message..." ng-model="newEmail">
-  <button type="submit" ng-click="addMessage(newMessage, newExer01, newEmail);newMessage = null;">send</button>
+  <input placeholder="Message..." ng-model="newExer02">
+  <button type="submit" ng-click="addMessage(newMessage, newExer01, newExer02);newMessage = null;">send</button>
 </form>
 <!-- <pre></pre> -->
 <ul id="messages" ng-show="messages" ng-repeat="message in messages">
     <li>
     
     <h4>{{message.text}}</h4>
-    <h5>{{message.exer}}</h5>
-    <h5>{{message.email}}</h5>
+    <h5>{{message.exer01}}</h5>
+    <h5>{{message.exer02}}</h5>
     </li>
 </ul>
 

@@ -48,19 +48,14 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
           return auth.$createUser(email, pass).then(function() {
               // authenticate so we have permission to write to Firebase
               return fns.login(email, pass);
-            }, function(){
-              console.error(err)
-
             }).then(function(user) {
               // store user data in Firebase after creating account
               return createProfile.setData(user.uid, email, name).then(function() {
-              return user;
+                return user;
               })
             }, function(err) { 
               console.error(err); 
               // return $q.reject(err); 
-            }).then(function(){
-              
             });
         },
 
@@ -84,33 +79,34 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
           });
           listeners.push(toggle);
           // var unbind = function() {
-          //   var i = listeners.indexOf(update);
-          //   if( i > -1 ) { listeners.splice(i, 1); }
-            console.log('watch');
+            // var i = listeners.indexOf(update);
+            // if( i > -1 ) { listeners.splice(i, 1); }
+            console.log('toggle');
           // };
           // if( $scope ) {
-          //   $scope.$on('$destroy', unbind);
+            // $scope.$on('$destroy', unbind);
           // }
           // return unbind;
 
         },
 
         statusChange: function () {
-        fns.getUser().then(function (user) {
+          fns.getUser().then(function (user) {
           // fns.user = user;
-          angular.forEach(listeners, function(iteration) {
-            // value of each auth for a user
-            iteration(user);
+          angular.forEach(listeners, function(toggle) {
+            // user state passed into toggle method
+            toggle(user);
+            console.log('statuschange');
           }, log);
         }, function(){
 
         });
 
         return listeners;
-        console.log('change');
+        
       }
 
-      };
+    };
 
       $rootScope.$on('$firebaseSimpleLogin:login', fns.statusChange);
       $rootScope.$on('$firebaseSimpleLogin:logout', fns.statusChange);

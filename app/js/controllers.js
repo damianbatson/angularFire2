@@ -18,7 +18,7 @@ angular.module('myApp.controllers', ['firebase.utils', 'simpleLogin'])
     };
   }])
 
-    .controller('CreateCtrl', ['$scope', 'simpleLogin', '$location', function($scope, simpleLogin, $location) {
+  .controller('CreateCtrl', ['$scope', 'simpleLogin', '$location', function($scope, simpleLogin, $location) {
     $scope.email = null;
     $scope.pass = null;
     $scope.confirm = null;
@@ -119,19 +119,13 @@ angular.module('myApp.controllers', ['firebase.utils', 'simpleLogin'])
         $location.path('/login');
       };
 
-      // var user.uid = $scope.auth.user.uid;
-
-      // var messagesRef = new Firebase("https://prototype-firebase.firebaseio.com/messages/"+user.uid);
       $scope.messages = fbutil.syncArray('messages/'+user.uid, {limit: 10, endAt: null});
-      // var usersRef = new Firebase("https://prototype-firebase.firebaseio.com/users/");
-      // $scope.users = $firebase(usersRef);
       // $scope.newMessage = null;
       
-      $scope.addMessage = function(newMessage, newExer01, newEmail) {
+      $scope.addMessage = function(newMessage, newExer01, newExer02) {
 
-            $scope.messages.$add({text:newMessage, exer:newExer01, email:newEmail});
+            $scope.messages.$add({text:newMessage, exer01:newExer01, exer02:newExer02});
             
-
       }; 
 
       $scope.changePassword = function(pass, confirm, newPass) {

@@ -115,7 +115,7 @@ describe('simpleLogin', function() {
   describe('#createProfile', function() {
     it('should invoke set on Firebase',
       inject(function(createProfile, fbutil) {
-        createProfile(123, 'test@test.com');
+        createProfile.setData(123, 'test@test.com');
         flush();
         expect(fbutil.$$ref.set).toHaveBeenCalledWith({email: 'test@test.com', name: 'Test'}, jasmine.any(Function));
       })
@@ -123,7 +123,7 @@ describe('simpleLogin', function() {
 
     it('should return a promise',
       inject(function(createProfile) {
-        expect(createProfile(456, 'test2@test2.com')).toBeAPromise();
+        expect(createProfile.setData(456, 'test2@test2.com')).toBeAPromise();
       })
     );
 
@@ -133,7 +133,7 @@ describe('simpleLogin', function() {
         fbutil.$$ref.set.andCallFake(function(val, cb) {
           cb && cb('noooooo');
         });
-        createProfile(456, 'test2@test2.com').then(null, cb);
+        createProfile.setData(456, 'test2@test2.com').then(null, cb);
         flush();
         expect(cb).toHaveBeenCalledWith('noooooo');
       })
