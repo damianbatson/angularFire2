@@ -11,9 +11,9 @@
     "angular-loader": "~1.2.x",
     "angular-mocks": "~1.2.x",
     "html5-boilerplate": "~4.3.0",
-    "firebase": "1.0.x",
-    "firebase-simple-login": "1.6.x",
-    "angularfire": "0.8.x",
-    "mockfirebase": "0.2.x"
+    "firebase": "2.1.x",
+    "angularfire": "0.9.1",
+    "mockfirebase": "~0.8.0"
   }
+
 }

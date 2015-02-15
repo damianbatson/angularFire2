@@ -11,20 +11,20 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
     }
   }])
 
-  .factory('simpleLogin', ['$firebaseSimpleLogin', 'fbutil', 'createProfile', 'changeEmail', '$q', '$rootScope',
-    function($firebaseSimpleLogin, fbutil, createProfile, changeEmail, $q, $rootScope) {
-      var auth = $firebaseSimpleLogin(fbutil.ref());
+  .factory('simpleLogin', ['$firebaseAuth', 'fbutil', 'createProfile', 'changeEmail', '$q', '$rootScope',
+    function($firebaseAuth, fbutil, createProfile, changeEmail, $q, $rootScope) {
+      var auth = $firebaseAuth(fbutil.ref());
       var listeners = [];
       var log = [];
 
       // calling method inside factory = use object literal name
       // call method outside factory = use factory name
 
-      var fns = {
+      var jsobj = {
         user: null,
 
         getUser: function() {
-          return auth.$getCurrentUser();
+          return auth.$waitForAuth();
         },
 
         /**
@@ -33,22 +33,24 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
          * @returns {*}
          */
         login: function(email, pass) {
-          return auth.$login('password', {
+          return auth.$authWithPassword({
             email: email,
-            password: pass,
-            rememberMe: true
-          });
+            password: pass
+            
+          }, {rememberMe: true});
         },
 
         logout: function() {
-          auth.$logout();
+          auth.$unauth();
         },
 
         createAccount: function(email, pass, name) {
-          return auth.$createUser(email, pass).then(function() {
+          return auth.$createUser({email: email, password: pass})
+          .then(function() {
               // authenticate so we have permission to write to Firebase
-              return fns.login(email, pass);
-            }).then(function(user) {
+              return jsobj.login(email, pass);
+            })
+          .then(function(user) {
               // store user data in Firebase after creating account
               return createProfile.setData(user.uid, email, name).then(function() {
                 return user;
@@ -60,19 +62,19 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
         },
 
         changePassword: function(email, oldpass, newpass) {
-          return auth.$changePassword(email, oldpass, newpass);
+          return auth.$changePassword({email: email, oldPassword: oldpass, newPassword: newpass});
         },
 
-        changeEmail: function(password, newEmail) {
-          return changeEmail(password, fns.user.email, newEmail, this);
+        changeEmail: function(password, oldEmail, newEmail) {
+          return changeEmail(password, oldEmail, newEmail, this);
         },
 
         removeUser: function(email, pass) {
-          return auth.$removeUser(email, pass);
+          return auth.$removeUser({email: email, password: pass});
         },
 
         watch: function(toggle) {
-          fns.getUser().then(function() {
+          jsobj.getUser().then(function() {
             // update();
           }, function(err){
 
@@ -91,29 +93,23 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
         },
 
         statusChange: function () {
-          fns.getUser().then(function (user) {
-          // fns.user = user;
+          user = auth.$getAuth();
+          // jsobj.user = user;
           angular.forEach(listeners, function(toggle) {
             // user state passed into toggle method
             toggle(user);
             console.log('statuschange');
-          }, log);
-        }, function(){
+          });        
+        }
 
-        });
+      }; //end object
+      
+      return jsobj;
 
-        return listeners;
-        
-      }
+      auth.$onAuth(jsobj.statusChange);
+      jsobj.statusChange();
 
-    };
-
-      $rootScope.$on('$firebaseSimpleLogin:login', fns.statusChange);
-      $rootScope.$on('$firebaseSimpleLogin:logout', fns.statusChange);
-      $rootScope.$on('$firebaseSimpleLogin:error', fns.statusChange);
-      // fns.statusChange();
-
-      return fns;
+      
     }])
 
   .factory('createProfile', ['fbutil', '$q', '$timeout', function(fbutil, $q, $timeout) {
