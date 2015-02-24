@@ -102,13 +102,12 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
           });        
         }
 
-      }; //end object
-      
-      return jsobj;
+      }; //end object      
 
       auth.$onAuth(jsobj.statusChange);
-      jsobj.statusChange();
+      // jsobj.statusChange();
 
+      return jsobj;
       
     }])
 
@@ -117,6 +116,7 @@ angular.module('simpleLogin', ['firebase', 'firebase.utils', 'changeEmail'])
     setData: function(id, email, name) {
       var ref = fbutil.ref('users', id), 
           def = $q.defer();
+          
       ref.set({email: email, name: name||firstPartOfEmail(email)}, function(err) {
         $timeout(function() {
           if(err) {

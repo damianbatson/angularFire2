@@ -9,12 +9,7 @@ angular.module('myApp', [
     'myApp.filters',
     'myApp.routes',
     'myApp.services'
-  ])
-
-  .run(['simpleLogin', function(simpleLogin) {
-    console.log('run'); //debug
-    simpleLogin.getUser();
-  }])
+  ]);
 
   // use then and err for methods and chaining methods
   // use deferred.resolve, deferred.reject and deferred.promise for on, once, set, remove

@@ -128,16 +128,16 @@ angular.module('myApp.controllers', ['firebase.utils', 'simpleLogin'])
             
       }; 
 
-      $scope.changePassword = function(pass, confirm, newPass) {
+      $scope.changePassword = function(pass, confirm, newpass) {
         resetMessages();
-        if( !pass || !confirm || !newPass ) {
+        if( !pass || !confirm || !newpass ) {
           $scope.err = 'Please fill in all password fields';
         }
-        else if( newPass !== confirm ) {
+        else if( newpass !== confirm ) {
           $scope.err = 'New pass and confirm do not match';
         }
         else {
-          simpleLogin.changePassword(profile.email, pass, newPass).then(function() {
+          simpleLogin.changePassword(profile.email, oldpass, newpass).then(function() {
               $scope.msg = 'Password changed';
             }, function(err) {
               $scope.err = err;

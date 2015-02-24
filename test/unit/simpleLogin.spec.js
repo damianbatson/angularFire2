@@ -34,9 +34,9 @@ describe('auth', function() {
       inject(function(simpleLogin) {
         spyOn(auth, '$authWithPassword').andReturn(resolve({uid: 'kato'}));
         var cb = jasmine.createSpy('resolve');
-        simpleLogin.login('test@test.com', '123').then(cb);
+        simpleLogin.login('kato@gmail.com', '123');
         flush();
-        expect(cb).toHaveBeenCalledWith({uid: 'kato'});
+        expect(auth.$authWithPassword).toHaveBeenCalledWith({email: 'kato@gmail.com', password:'123'}, {rememberMe: true});
       })
     );
   });
@@ -55,26 +55,24 @@ describe('auth', function() {
     it('should fail if $firebaseSimpleLogin fails', function() {
       spyOn(auth, '$changePassword').andReturn(reject('errr'));
       var cb = jasmine.createSpy('reject');
-      simpleLogin.changePassword({
-        oldpass: 124,
-        newpass: 123,
-        confirm: 123
-      }).catch(auth.$changePassword);
+      simpleLogin.changePassword('test_error', '123', '123');
       flush();
-      expect(auth.$changePassword).toHaveBeenCalledWith('errr');
+      expect(auth.$changePassword).toHaveBeenCalledWith({email: 'test_error',
+        oldPassword: '123',
+        newPassword: '123'});
       expect(auth.$changePassword).toHaveBeenCalled();
     });
 
     it('should resolve to user if $firebaseSimpleLogin succeeds', function() {
-      spyOn(auth, '$changePassword').andReturn(resolve({uid: 'kato'}));
+      spyOn(auth, '$changePassword').andReturn();
       var cb = jasmine.createSpy('resolve');
-      simpleLogin.changePassword({
-        oldpass: 124,
-        newpass: 123,
-        confirm: 123
-      }).then(cb);
+      simpleLogin.changePassword('kato@gmail.com', '123', '123');
       flush();
-      expect(cb).toHaveBeenCalledWith({uid: 'kato'});
+      expect(auth.$changePassword).toHaveBeenCalledWith({
+        email: 'kato@gmail.com',
+        oldPassword: '123',
+        newPassword: '123'
+      });
       expect(auth.$changePassword).toHaveBeenCalled();
     });
   });
@@ -94,7 +92,7 @@ describe('auth', function() {
     it('should reject promise if error', function() {
       var cb = jasmine.createSpy('reject');
       spyOn(auth, '$createUser').andReturn(reject('test_error'));
-      simpleLogin.createAccount('test_error', '123').catch(cb);
+      simpleLogin.createAccount('test_error', '123');
       flush();
       expect(auth.$createUser).toHaveBeenCalledWith({email:'test_error', password:'123'});
     });
@@ -112,10 +110,12 @@ describe('auth', function() {
   describe('#createProfile', function() {
     it('should invoke set on Firebase',
       inject(function(createProfile, fbutil) {
-        spyOn(fbutil.ref(), 'set');
-        createProfile.setData(123, 'test@test.com');
+        spyOn(fbutil.ref(), 'set').andCallFake(function() {
+          return ('test@test.com', 'kato');
+        });
+        createProfile.setData(123, 'test@test.com', 'kato');
         flush();
-        expect(fbutil.ref().set).toHaveBeenCalledWith({email: 'test@test.com', name: 'Test'}, jasmine.any(Function));
+        expect(fbutil.ref().set).toHaveBeenCalledWith({email: 'test@test.com', name: 'kato'}, jasmine.any(Function));
       })
     );
 
@@ -129,11 +129,11 @@ describe('auth', function() {
       inject(function(createProfile, fbutil) {
         var cb = jasmine.createSpy();
         spyOn(fbutil.ref(), 'set').andCallFake(function() {
-          cb && cb('test@test.com');
+          return ('test_error', 'kato');
         });
-        createProfile.setData(456, 'test2@test2.com');
+        createProfile.setData(456, 'test_error', 'kato');
         flush();
-        expect(cb).toHaveBeenCalledWith('test@test.com');
+        expect(fbutil.ref().set).toHaveBeenCalledWith({email: 'test_error', name: 'kato'}, jasmine.any(Function));
       })
     );
   });
