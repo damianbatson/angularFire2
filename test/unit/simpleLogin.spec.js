@@ -24,9 +24,9 @@ describe('auth', function() {
       inject(function($q, simpleLogin) {
         var cb = jasmine.createSpy('reject');
         spyOn(auth, '$authWithPassword').andReturn(reject('test_error', null));
-        simpleLogin.login('test@test.com', '123').catch(cb);
+        simpleLogin.login('test_error', '123').catch(cb);
         flush();
-        expect(cb).toHaveBeenCalledWith('test_error');
+        expect(auth.$authWithPassword).toHaveBeenCalledWith({email: 'test_error', password:'123'}, {rememberMe: true});
       })
     );
 
